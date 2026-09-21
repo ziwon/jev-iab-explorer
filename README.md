@@ -16,11 +16,21 @@ A Korean-language video explorer that uses the Jev API to classify YouTube searc
 - **Continue partial results** — Reuse earlier scores and explore skipped IAB branches with a per-video call budget.
 - **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
 
-Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example; the live captures show the earlier interface.
+Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example.
+
+## Curate by topic and purpose
+
+[![Live AI income search, AND topic filters, adaptive purpose filtering, and Jev evidence](assets/readme/ai-income-curation-live.gif)](assets/readme/ai-income-curation-live.gif)
+
+Search **“AI 자동 수익”** (AI automated income), then combine **Business and Finance AND Personal Finance**: 17 collected videos become 2. Selecting **“수익화 전략 및 조언”** (monetization strategy and advice) leaves 1, with its raw Jev scores and purpose definition available in the detail panel.
+
+*Full HD capture of live YouTube, Gemini, and Jev responses. Waiting periods are shortened. Gemini-generated purpose names and matching videos vary by search; partial evaluations remain visible.*
+
+[Still image](assets/readme/ai-income-curation-live.png) · [Purpose scores](assets/readme/ai-income-purpose-detail.png) · [Capture data](assets/readme/ai-income-curation-live.json)
 
 ## Inside a classification
 
-The detail panel connects each video to its IAB category paths, raw Jev scores, and derived path scores. This original frame from the live run above also shows partial evaluation and the recommendation to add transcript evidence.
+The detail panel connects each video to its IAB category paths, raw Jev scores, and derived path scores. This frame from the earlier workflow automation capture also shows partial evaluation and the recommendation to add transcript evidence.
 
 [![Video details with IAB labels, raw Jev scores, path scores, and partial evaluation notices](assets/readme/workflow-automation-detail.png)](assets/readme/workflow-automation-detail.png)
 
