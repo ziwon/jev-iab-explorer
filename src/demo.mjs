@@ -20,6 +20,7 @@ export function demoProvider() {
   return {metrics,async evaluate(state,questions){
     // Fixed fixture only. NEVER used for arbitrary user input or provider fallback.
     const tables={seg_1:{'Business and Finance':0.91,'Business':0.88,'Business I.T.':0.84,'Startups':0.08,'Education':0.96,'Online Education':0.93},seg_2:{'Business and Finance':0.95,'Business':0.92,'Startups':0.9,'Business I.T.':0.15,'Education':0.12}};
-    return Object.fromEntries(Object.entries(questions).map(([id,q])=>[id,id==='sufficient'?1:tables[state.segment_id]?.[q.instructions.category.split(' > ').at(-1)]??0.03]));
+    const purposes={seg_1:{introduction:.82,tutorial:.94},seg_2:{case_study:.91}};
+    return Object.fromEntries(Object.entries(questions).map(([id,q])=>[id,id==='sufficient'?1:q.instructions.purpose_id?purposes[state.segment_id]?.[q.instructions.purpose_id]??.03:tables[state.segment_id]?.[q.instructions.category.split(' > ').at(-1)]??0.03]));
   }};
 }

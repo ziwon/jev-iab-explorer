@@ -1,4 +1,5 @@
-import {acceptedLabels,buildFacets,displayTime,duration,itemKey,matchesCategory,resultState,safeThumbnail,warningText} from './explore-data.mjs';
+import {acceptedLabels,acceptedPurposes,buildFacets,displayTime,duration,itemKey,matchesDiscovery,matchesTopics,matchesPurposes,purposeState,resultState,safeThumbnail,warningText} from './explore-data.mjs';
+import {PURPOSES} from './purposes.mjs';
 import {LIMITS,normalizeInput,parseTranscript} from './shared.mjs';
 
 const $=id=>document.getElementById(id);
@@ -12,7 +13,13 @@ const needsReview=item=>['review','partial','abstained'].includes(resultState(it
 const fieldNames={title:'제목',description:'설명',tags:'태그',youtube_category_id:'YouTube 카테고리 · 참고 정보',channel_title:'채널 · 참고 정보'};
 const welcome=$('video-list').firstElementChild.cloneNode(true);
 const treeWelcome=$('topic-tree').firstElementChild.cloneNode(true);
-let config=null,collection=null,items=[],selected=new Set(),topic=null,stateFilter='all',listView=false,busy=null,controller=null,detailItem=null;
+let config=null,collection=null,items=[],selected=new Set(),topicOperator='AND',stateFilter='all',listView=false,busy=null,controller=null,detailItem=null;
+const topics=new Map(),purposes=new Set();
+const purposeOptions=[...PURPOSES,{id:'not_assessed',name:'목적 미평가'},{id:'abstained',name:'목적 판단 보류'}];
+const discoveryFilters=()=>({topics:[...topics.keys()],operator:topicOperator,purposes:[...purposes]});
+const hasFilters=()=>topics.size>0 || purposes.size>0 || stateFilter!=='all';
+const matchesState=(item,value=stateFilter)=>value==='all' || (value==='review'?needsReview(item):resultState(item)===value);
+function clearFilters(){topics.clear();purposes.clear();topicOperator='AND';stateFilter='all';}
 const closedBranches=new Set();
 const transcriptDrafts=new WeakMap();
 const MAX_RESULTS=100;
@@ -24,14 +31,14 @@ function scheduleNextPage(){
   if(scrollCheck!==null)return;
   scrollCheck=requestAnimationFrame(()=>{
     scrollCheck=null;
-    if(busy || paginationPaused || detailItem || topic || stateFilter!=='all' || !hasNextPage())return;
+    if(busy || paginationPaused || detailItem || hasFilters() || !hasNextPage())return;
     const bounds=$('scroll-sentinel').getBoundingClientRect();
     if(bounds.top<=innerHeight+240 && bounds.bottom>=0)search(true);
   });
 }
 function renderPagination(){
   const container=$('pagination');container.hidden=!collection || collection.mode==='fixture_demo';
-  const next=hasNextPage(),filtered=!!topic || stateFilter!=='all',unfinished=items.some(selectable);
+  const next=hasNextPage(),filtered=hasFilters(),unfinished=items.some(selectable);
   const count=`${items.length} / ${MAX_RESULTS}개 영상`;
   $('scroll-cancel').hidden=busy!=='classify' && !(busy==='search'&&loadingMore);
   $('load-more').hidden=!!busy || (!paginationPaused && !(filtered&&next));
@@ -51,7 +58,7 @@ function renderPagination(){
 function stopBrowse(){paginationPaused='stopped';controller?.abort();renderPagination();}
 async function resumeBrowse(){
   if(busy)return;
-  if(topic || stateFilter!=='all'){topic=null;stateFilter='all';}
+  if(hasFilters()){clearFilters();render();}
   const resumeClassification=paginationPaused==='stopped' && items.some(selectable);
   paginationPaused=null;
   if(resumeClassification)await classifyItems(items.filter(selectable));
@@ -82,7 +89,7 @@ function setBusy(value){
   renderPagination();
 }
 function visibleItems(){
-  const rows=items.filter(item=>matchesCategory(item,topic?.id) && (stateFilter==='all' || (stateFilter==='review'?needsReview(item):resultState(item)===stateFilter)));
+  const rows=items.filter(item=>matchesDiscovery(item,discoveryFilters()) && matchesState(item));
   if($('sort').value==='classified')rows.sort((a,b)=>Number(!!b.result)-Number(!!a.result) || a.collection_rank-b.collection_rank);
   return rows;
 }
@@ -98,22 +105,44 @@ function updateSelection(){
   $('classify').textContent=selected.size?`선택 ${selected.size}개 다시 시도`:'선택 영상 다시 시도';
   $('classify').disabled=!!busy || !selected.size || collection?.mode==='fixture_demo';
 }
-function setTopic(node){topic=node;render();if(matchMedia('(max-width:760px)').matches){toggleTopics(false);$('results').scrollIntoView({block:'start'});}else if(node)$('topic-tree').querySelector(`[data-category="${CSS.escape(node.id)}"]`)?.focus();}
+function setTopic(node){if(!node)topics.clear();else if(topics.has(node.id))topics.delete(node.id);else topics.set(node.id,node);render();if(node)$('topic-tree').querySelector(`[data-category="${CSS.escape(node.id)}"] input`)?.focus();}
+function setPurpose(id){if(purposes.has(id))purposes.delete(id);else purposes.add(id);render();$('purpose-filters').querySelector(`[data-purpose="${CSS.escape(id)}"]`)?.focus();}
 function toggleTopics(open){document.querySelector('.facet-panel').classList.toggle('topics-open',open);$('topics-toggle').textContent=open?'주제 접기':'주제 펼치기';$('topics-toggle').setAttribute('aria-expanded',String(open));}
 function renderTree(){
   $('all-count').textContent=collection?String(items.length):'—';
-  $('all-topics').classList.toggle('active',!topic);$('all-topics').setAttribute('aria-pressed',String(!topic));
-  $('reset-filters').disabled=!topic && stateFilter==='all';
+  $('all-topics').classList.toggle('active',!topics.size);$('all-topics').setAttribute('aria-pressed',String(!topics.size));
+  $('reset-filters').disabled=!hasFilters();
+  for(const input of $('topic-operator').querySelectorAll('input'))input.checked=input.value===topicOperator;
   const root=$('topic-tree');root.replaceChildren();const facets=buildFacets(items);
   if(!facets.length){root.append(treeWelcome.cloneNode(true));if(collection)root.querySelector('p').textContent=items.some(i=>i.result)?'수락된 IAB 분류가 없습니다. 판단 보류와 미평가는 관련 없음이 아닙니다.':busy==='classify'?'검색 결과를 분류하고 있습니다. 완료된 주제부터 표시합니다.':'아직 분류된 주제가 없습니다. 남은 영상의 분류를 다시 시도할 수 있습니다.';return;}
   function branch(n){
     const wrap=el('div',undefined,'facet-node'),row=el('div',undefined,'facet-row'),children=el('div',undefined,'facet-children');
     children.hidden=closedBranches.has(n.id);
     if(n.children.length){const toggle=button(undefined,'facet-toggle',()=>{if(closedBranches.has(n.id))closedBranches.delete(n.id);else closedBranches.add(n.id);children.hidden=closedBranches.has(n.id);toggle.setAttribute('aria-expanded',String(!children.hidden));});toggle.append(icon('chevron'));toggle.setAttribute('aria-label',`${n.name} 하위 주제`);toggle.setAttribute('aria-expanded',String(!children.hidden));row.append(toggle);}else row.append(el('span',undefined,'facet-spacer'));
-    const choose=button(undefined,`facet-select${topic?.id===n.id?' active':''}`,()=>setTopic(n));choose.dataset.category=n.id;choose.setAttribute('aria-pressed',String(topic?.id===n.id));choose.title=n.path.join(' › ');choose.append(el('span',n.name,'facet-name'),el('span',String(n.videos.size),'facet-count'));row.append(choose);wrap.append(row);
+    const choose=el('label',undefined,`facet-select${topics.has(n.id)?' active':''}`),check=el('input');check.type='checkbox';check.checked=topics.has(n.id);check.onchange=()=>setTopic(n);check.setAttribute('aria-label',n.path.join(' › '));choose.dataset.category=n.id;choose.title=n.path.join(' › ');choose.append(check,el('span',n.name,'facet-name'),el('span',String(n.videos.size),'facet-count'));row.append(choose);wrap.append(row);
     if(n.children.length){children.append(...n.children.map(branch));wrap.append(children);}return wrap;
   }
   root.append(...facets.map(branch));
+}
+function renderPurposes(){
+  $('purpose-panel').hidden=!collection;
+  const root=$('purpose-filters');root.replaceChildren();
+  const candidates=items.filter(item=>matchesTopics(item,[...topics.keys()],topicOperator)&&matchesState(item));
+  const all=button('모든 목적',`purpose-filter${!purposes.size?' active':''}`,()=>{purposes.clear();render();$('purpose-filters').firstElementChild.focus();});all.setAttribute('aria-pressed',String(!purposes.size));root.append(all);
+  for(const purpose of purposeOptions){
+    const count=candidates.filter(item=>matchesPurposes(item,[purpose.id])).length;
+    const b=button(undefined,`purpose-filter${purposes.has(purpose.id)?' active':''}`,()=>setPurpose(purpose.id));
+    b.append(el('span',purpose.name),el('span',String(count),'purpose-count'));b.dataset.purpose=purpose.id;b.setAttribute('aria-pressed',String(purposes.has(purpose.id)));b.disabled=!count&&!purposes.has(purpose.id);root.append(b);
+  }
+}
+function renderActiveFilters(){
+  const root=$('active-topic');root.hidden=!topics.size&&!purposes.size;root.replaceChildren();
+  if(topics.size)root.append(el('span',topicOperator==='AND'?'모든 주제 포함':'주제 중 하나 포함','filter-operator-label'));
+  for(const node of topics.values()){
+    const b=button(`${node.path.at(-1)} 해제`,'filter-remove',()=>setTopic(node));b.title=node.path.join(' › ');root.append(b);
+  }
+  for(const id of purposes){const p=purposeOptions.find(p=>p.id===id);root.append(button(`${p.name} 해제`,'filter-remove',()=>setPurpose(id)));}
+  root.append(button('조건 초기화','text-button',resetFilters));
 }
 function badge(item){const s=resultState(item);return el('span',stateNames[s],`state-badge state-${s}`);}
 function placeholder(item){const p=el('div',undefined,'thumb-placeholder');p.append(icon(item.fixture_id?'branch':'play'),el('span',item.fixture_id?'합성 콘텐츠 예시':'미리보기 없음'));return p;}
@@ -130,6 +159,8 @@ function card(item){
   const meta=el('div',undefined,'video-meta');meta.append(badge(item),el('span',item.fixture_id?'고정 예시':`검색 순서 ${item.collection_rank}`,'search-rank'));body.append(meta);
   const labels=acceptedLabels(item.result);
   if(labels.length){const chips=el('div',undefined,'card-topics');for(const l of labels.slice(0,2)){const chip=button(l.name,'topic-chip',()=>setTopic({id:l.category_id,path:l.path}));chip.title=l.path.join(' › ');chips.append(chip);}if(labels.length>2)chips.append(button(`+${labels.length-2}`,'topic-chip',()=>showDetail(item)));body.append(chips);}
+  const purposeLabels=acceptedPurposes(item.result);
+  if(purposeLabels.length){const tags=el('div',undefined,'card-purposes');tags.append(el('span','목적','purpose-caption'));for(const p of purposeLabels){const tag=button(p.name,'purpose-tag',()=>setPurpose(p.purpose_id));tag.setAttribute('aria-label',`${p.name} 목적 필터`);tags.append(tag);}body.append(tags);}
   if(item.error)body.append(el('p',item.error,'card-error'));
   article.append(thumb,body);return article;
 }
@@ -141,20 +172,21 @@ function render(){
   $('results-title').textContent=hasCollection?`${collection.query}`:'탐색할 영상을 찾아보세요';
   const assessed=items.filter(x=>x.result).length,attempts=items.reduce((n,x)=>n+(x.result?.usage.http_attempts??0)+(x.previous_results??[]).reduce((sum,r)=>sum+r.usage.http_attempts,0),0);
   $('result-summary').textContent=hasCollection?`${items.length}개 영상 · ${assessed}개 평가 · ${items.length-assessed}개 미평가${attempts?` · Jev HTTP ${attempts}회`:''}${isDemo?' · 실제 호출 없음':''}`:'검색이 완료되면 Jev가 자동으로 주제를 분류합니다.';
-  renderTree();
+  if(hasCollection&&hasFilters())$('result-summary').textContent+=` · ${visibleItems().length}개 표시`;
+  renderTree();renderPurposes();
   const filterRoot=$('state-filters');filterRoot.replaceChildren();
-  for(const [value,name] of filters){const count=items.filter(x=>matchesCategory(x,topic?.id)&&(value==='all'||(value==='review'?needsReview(x):resultState(x)===value))).length;const b=button(`${name} ${count}`,`state-filter${stateFilter===value?' active':''}`,()=>{stateFilter=value;render();$('state-filters').querySelector(`[data-filter="${value}"]`)?.focus();});b.dataset.filter=value;b.setAttribute('aria-pressed',String(stateFilter===value));filterRoot.append(b);}
-  $('active-topic').hidden=!topic;$('active-topic').replaceChildren();if(topic){$('active-topic').append(el('span',topic.path.join(' › ')),button('해제','text-button',()=>setTopic(null)));}
+  for(const [value,name] of filters){const count=items.filter(x=>matchesDiscovery(x,discoveryFilters())&&matchesState(x,value)).length;const b=button(`${name} ${count}`,`state-filter${stateFilter===value?' active':''}`,()=>{stateFilter=value;render();$('state-filters').querySelector(`[data-filter="${value}"]`)?.focus();});b.dataset.filter=value;b.setAttribute('aria-pressed',String(stateFilter===value));filterRoot.append(b);}
+  renderActiveFilters();
   const list=$('video-list');list.classList.toggle('list-view',listView);list.replaceChildren();
   const visible=visibleItems();
   if(!hasCollection)list.append(welcome.cloneNode(true));
-  else if(!visible.length){const empty=el('div',undefined,'empty-state');empty.append(el('h3',items.length?'이 조건에 해당하는 영상이 없습니다.':'검색 결과가 없습니다.'),el('p',items.length?'주제 또는 상태 필터를 해제해 보세요.':'검색어를 바꾸거나 범위를 넓혀 다시 검색해 보세요.'));if(items.length)empty.append(button('필터 초기화','button secondary small',resetFilters));list.append(empty);}
+  else if(!visible.length){const empty=el('div',undefined,'empty-state');empty.append(el('h3',items.length?'이 조건에 해당하는 영상이 없습니다.':'검색 결과가 없습니다.'),el('p',items.length?'주제·목적·상태 조건을 줄이거나 주제를 OR로 조합해 보세요.':'검색어를 바꾸거나 범위를 넓혀 다시 검색해 보세요.'));if(items.length)empty.append(button('필터 초기화','button secondary small',resetFilters));list.append(empty);}
   else list.append(...visible.map(card));
   renderPagination();
   $('view-toggle').replaceChildren(icon(listView?'grid':'list'));$('view-toggle').setAttribute('aria-label',listView?'격자로 보기':'목록으로 보기');$('view-toggle').title=listView?'격자로 보기':'목록으로 보기';
   updateSelection();
 }
-function resetFilters(){topic=null;stateFilter='all';render();}
+function resetFilters(){clearFilters();render();}
 function skeleton(){const list=$('video-list');list.replaceChildren();for(let i=0;i<6;i++){const x=el('div',undefined,'skeleton');x.append(el('div',undefined,'thumbnail'),el('div',undefined,'skeleton-line'),el('div',undefined,'skeleton-line short'));list.append(x);}}
 async function search(more=false){
   if(busy || (more&&!hasNextPage()) || !ensureConnection(true))return;
@@ -165,7 +197,7 @@ async function search(more=false){
   if(!collection)skeleton();
   try{
     const data=await api('/api/youtube/search',{query,limit:Math.min(Number($('search-limit').value),more?MAX_RESULTS-items.length:20),...(more?{page_token:pageToken}:{})},controller.signal);
-    if(!more){items=[];selected.clear();topic=null;stateFilter='all';closedBranches.clear();visitedPages.clear();paginationEnd='';$('batch-status').hidden=true;}
+    if(!more){items=[];selected.clear();clearFilters();closedBranches.clear();visitedPages.clear();paginationEnd='';$('batch-status').hidden=true;}
     paginationPaused=null;
     if(pageToken)visitedPages.add(pageToken);
     const existing=new Set(items.map(itemKey));const base=items.length;
@@ -267,6 +299,21 @@ function renderDetail(item){
       if(label.specificity==='broad')row.append(el('p','상위 범주에서 수락 · 더 구체적인 분류는 미확정','help'));result.append(row);
     }
     result.append(el('p',`수락 기준 ${r.policy.accept.toFixed(2)}${metadata?' · 메타데이터 종료 기준 0.85':''}. 경로 점수는 경로상의 원시 점수 최솟값이며, 두 값 모두 검증된 정확도가 아닙니다.`,'help'));out.append(result);
+    const purposeSection=section('영상 목적'),purposeLabels=acceptedPurposes(r);
+    purposeSection.append(el('p',metadata?'공개 메타데이터에서 추정한 활용 목적입니다. IAB 범주와 별도 태그입니다.':'평가한 자막 구간에서 확인한 활용 목적입니다. 영상 전체의 목적을 확정하지 않습니다.','help'));
+    if(purposeLabels.length){
+      const names=el('p',purposeLabels.map(p=>p.name).join(' · '),'purpose-summary');purposeSection.append(names);
+    }else purposeSection.append(el('p',purposeState(item)==='not_assessed'?'영상 목적을 평가하지 않은 입력이 있습니다. 미평가는 관련 없음이 아닙니다.':'목적 판단을 보류했습니다. 근거가 부족하거나 수락 기준을 넘는 목적이 없습니다.','detail-message warning'));
+    for(const segment of r.segments){
+      const assessment=segment.purpose_assessment;
+      if(!assessment || assessment.status==='not_assessed'){purposeSection.append(el('p',`${segment.segment_id}: 목적 미평가`,'help'));continue;}
+      const detail=el('details');detail.append(el('summary',metadata?'목적별 원시 점수':`${segment.segment_id} · 목적별 원시 점수`));
+      const table=el('table',undefined,'trace-table'),thead=el('thead'),head=el('tr');for(const name of ['목적','원시 점수','판정'])head.append(el('th',name));thead.append(head);table.append(thead);
+      const tbody=el('tbody');for(const p of assessment.evaluations){const row=el('tr');row.append(el('td',p.name),el('td',p.model_probability.toFixed(3)),el('td',assessment.labels.some(l=>l.purpose_id===p.purpose_id)?'수락':'보류'));tbody.append(row);}table.append(tbody);detail.append(table);purposeSection.append(detail);
+    }
+    if(r.coverage.omitted_segments.length)purposeSection.append(el('p','생략된 자막 구간의 목적은 미평가입니다.','help'));
+    if(r.purpose_rubric)purposeSection.append(el('p',`수락 기준 ${r.purpose_rubric.accept.toFixed(2)} · ${r.purpose_rubric.version}. 원시 점수는 검증된 정확도가 아닙니다.`,'help'));
+    out.append(purposeSection);
     const evaluated=r.segments.reduce((n,s)=>n+s.evaluations.length,0),trace=section('평가 범위와 판정 경로');
     trace.append(el('p',`${r.coverage.processed_text_segments}/${r.coverage.total_text_segments} ${metadata?'메타데이터 묶음':'자막 구간'} · ${evaluated}회 범주 판정 · taxonomy ${r.taxonomy.node_count}개 노드`),el('p','평가하지 않은 노드는 미평가입니다. 근거 필드는 모델에 제공한 입력이며, 독립적으로 검증된 설명이 아닙니다.','help'));
     for(const segment of r.segments){
@@ -290,17 +337,18 @@ $('search-form').onsubmit=e=>{e.preventDefault();search();};$('load-more').oncli
 $('select-all').onchange=e=>{for(const item of visibleItems().filter(selectable)){if(e.target.checked)selected.add(itemKey(item));else selected.delete(itemKey(item));}render();};
 $('classify').onclick=classifySelected;$('cancel').onclick=stopBrowse;$('scroll-cancel').onclick=stopBrowse;
 $('all-topics').onclick=()=>setTopic(null);$('reset-filters').onclick=resetFilters;$('sort').onchange=render;
+$('topic-operator').onchange=e=>{if(e.target.name==='topic-operator'){topicOperator=e.target.value;render();}};
 const topicsToggle=button('주제 펼치기','text-button mobile-topics-toggle',()=>toggleTopics(!document.querySelector('.facet-panel').classList.contains('topics-open')));topicsToggle.id='topics-toggle';topicsToggle.setAttribute('aria-expanded','false');topicsToggle.setAttribute('aria-controls','topic-tree');document.querySelector('.facet-heading').append(topicsToggle);
 $('view-toggle').onclick=()=>{listView=!listView;render();};
 $('video-list').addEventListener('click',e=>{const b=e.target.closest('[data-query]');if(b){$('query').value=b.dataset.query;$('query').focus();}});
 $('demo').onclick=async()=>{
   if(busy)return;setBusy('demo');$('notice').hidden=true;
-  try{const data=await api('/api/explore/demo');collection={...data,items:undefined};items=data.items.map((x,i)=>({...x,collection_rank:i+1}));selected.clear();topic=null;stateFilter='all';closedBranches.clear();$('batch-status').hidden=true;}
+  try{const data=await api('/api/explore/demo');collection={...data,items:undefined};items=data.items.map((x,i)=>({...x,collection_rank:i+1}));selected.clear();clearFilters();closedBranches.clear();$('batch-status').hidden=true;}
   catch(e){notify(`데모를 불러오지 못했습니다. ${e.message}`);}finally{setBusy(null);render();}
 };
-$('leave-demo').onclick=()=>{collection=null;items=[];selected.clear();topic=null;stateFilter='all';$('notice').hidden=true;render();$('query').focus();};
+$('leave-demo').onclick=()=>{collection=null;items=[];selected.clear();clearFilters();$('notice').hidden=true;render();$('query').focus();};
 $('export').onclick=()=>{
-  const data={schema_version:'explore-1.0',...collection,items:items.map(({state,...item})=>({...item,assessment_status:resultState(item)})),notes:['Counts refer only to collected candidates, not all of YouTube.','Unassessed categories and videos are unknown, not negative.','Raw model values and path scores are not calibrated accuracy.']};
+  const data={schema_version:'explore-1.1',...collection,filters:{...discoveryFilters(),state:stateFilter},items:items.map(({state,...item})=>({...item,assessment_status:resultState(item)})),notes:['Counts refer only to collected candidates, not all of YouTube.','Unassessed categories and videos are unknown, not negative.','Raw model values and path scores are not calibrated accuracy.','Viewing purposes are separate project-defined tags, not IAB categories. Transcript purposes refer only to assessed segments.']};
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download=collection.mode==='fixture_demo'?'jev-iab-synthetic-demo.json':'jev-iab-search-results.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 const scrollObserver=new IntersectionObserver(scheduleNextPage,{rootMargin:'240px 0px'});scrollObserver.observe($('scroll-sentinel'));

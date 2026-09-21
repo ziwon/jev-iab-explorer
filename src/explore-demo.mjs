@@ -26,13 +26,14 @@ const fixtures=[
   ['broad','음악과 기술이 만나는 순간','콘텐츠 노트 · 합성 채널','음악 콘텐츠입니다. 구체적인 장르를 확정할 단서는 부족합니다.',{'JLBCU7':.79,'338':.88}],
   ['uncertain','오늘의 짧은 기록','일상 기록 · 합성 채널','오늘도 함께해 주세요.',{},.3]
 ];
+const purposeFixtures={cloud:{introduction:.84,tutorial:.95},startup:{case_study:.93,tutorial:.83},safety:{introduction:.94},jazz:{introduction:.91},learning:{tutorial:.9},broad:{},uncertain:{}};
 export async function exploreDemo() {
   const items=[];
   for(const [key,title,channel,description,table,sufficient=1] of fixtures) {
     const metadata={video_id:null,title,description,channel_title:channel,tags:[],thumbnail_url:'',duration_iso8601:'',published_at:''};
     const input={title,youtube_url:null,evidence_mode:'metadata_only',metadata,metadata_evidence:[{id:'fixture_title',field:'title',text:title},{id:'fixture_description',field:'description',text:description}]};
     const provider={metrics:{attempts:0,successful_calls:0,input_tokens:0,output_tokens:0,models:new Set(['fixture-not-a-model'])},async evaluate(state,questions){
-      return Object.fromEntries(Object.entries(questions).map(([id,q])=>[id,id==='sufficient'?sufficient:table[[...taxonomy.nodes.values()].find(n=>n.path.join(' > ')===q.instructions.category)?.id]??.02]));
+      return Object.fromEntries(Object.entries(questions).map(([id,q])=>[id,id==='sufficient'?sufficient:q.instructions.purpose_id?purposeFixtures[key][q.instructions.purpose_id]??.02:table[[...taxonomy.nodes.values()].find(n=>n.path.join(' > ')===q.instructions.category)?.id]??.02]));
     }};
     items.push({fixture_id:`fixture-${key}`,video:metadata,youtube_url:null,search_rank:items.length+1,result:await classify(input,taxonomy,provider,{demo:true})});
   }

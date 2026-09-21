@@ -11,8 +11,11 @@ A Korean-language video explorer that uses the Jev API to classify YouTube searc
 [Still image](assets/readme/workflow-automation-live.png) · [Capture data](assets/readme/workflow-automation-live.json) · [Architecture](docs/ARCHITECTURE.md)
 
 - **Automatic classification** — Search once and classify each result using its title, description, and tags.
-- **Topic-based browsing** — Explore hierarchical IAB filters and multiple labels, with scrolling up to 100 videos.
+- **Combine topics** — Select multiple IAB topics with AND/OR matching, with scrolling up to 100 videos.
+- **Find the right format** — Filter by introduction, hands-on tutorial, product comparison, news, or case study. These viewing purposes are separate from IAB categories.
 - **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
+
+Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example; the live captures show the earlier interface.
 
 ## Inside a classification
 
@@ -52,6 +55,8 @@ Set `TYPESAFE_API_KEY` and `YOUTUBE_API_KEY` in `.dev.vars`, then run `npm run d
 ## How it works
 
 Public metadata is evaluated first. When evidence is insufficient, transcripts can supplement the classification. Video, audio, and thumbnail pixels are not analyzed. Raw scores are not calibrated accuracy measurements; path scores are heuristics, and unassessed categories remain unknown.
+
+Viewing purposes are evaluated alongside evidence sufficiency in the same Jev request. This adds questions and token usage, without a separate purpose-only request. Purpose scores, evidence IDs, and a separate rubric version are included in the detail panel and JSON export. Transcript-based purposes describe assessed segments, not the entire video. Missing assessments and abstentions remain distinct.
 
 ## Tests
 

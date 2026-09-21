@@ -10,8 +10,23 @@
 <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
 <div id="demo-banner" class="demo-banner" hidden><strong>합성 데모</strong><span>고정된 예시와 모의 점수입니다. 실제 검색·Jev 호출·성능 측정 결과가 아닙니다.</span><button id="leave-demo" class="text-button">데모 나가기</button></div>
 <div class="explorer">
-<aside class="facet-panel" aria-labelledby="facet-title"><div class="facet-heading"><h2 id="facet-title">IAB 주제</h2><button id="reset-filters" class="text-button" disabled>초기화</button></div><p class="help">수락된 분류를 따라 탐색하세요.</p><button id="all-topics" class="facet-all active" aria-pressed="true"><span>모든 주제</span><span id="all-count">—</span></button><div id="topic-tree" class="topic-tree"><div class="tree-empty"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 10v28m0-21h22M12 34h22"/><circle cx="35" cy="17" r="4"/><circle cx="35" cy="34" r="4"/><circle cx="12" cy="8" r="4"/></svg><p>분류를 시작하면<br>주제의 가지가 펼쳐집니다.</p></div></div><div class="facet-footnote"><p>개수는 현재 모은 영상 기준입니다.<br>한 영상이 여러 주제에 속할 수 있습니다.</p><details><summary>분류는 어떻게 이루어지나요?</summary><p>Jev가 관련 IAB 가지를 단계적으로 평가합니다. 근거가 부족하면 상위 범주에 머물거나 판단을 보류합니다. 탐색하지 않은 범주는 미평가입니다.</p></details></div></aside>
+<aside class="facet-panel" aria-labelledby="facet-title">
+  <div class="facet-heading"><h2 id="facet-title">IAB 주제</h2><button id="reset-filters" class="text-button" disabled>초기화</button></div>
+  <p class="help">여러 주제를 선택해 조합하세요.</p>
+  <fieldset class="topic-operator" id="topic-operator"><legend class="sr-only">선택한 주제를 조합하는 방식</legend>
+    <label><input type="radio" name="topic-operator" value="AND" checked><span>모두 포함 <small>AND</small></span></label>
+    <label><input type="radio" name="topic-operator" value="OR"><span>하나라도 <small>OR</small></span></label>
+  </fieldset>
+  <button id="all-topics" class="facet-all active" aria-pressed="true"><span>모든 주제</span><span id="all-count">—</span></button>
+  <div id="topic-tree" class="topic-tree"><div class="tree-empty"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 10v28m0-21h22M12 34h22"/><circle cx="35" cy="17" r="4"/><circle cx="35" cy="34" r="4"/><circle cx="12" cy="8" r="4"/></svg><p>분류를 시작하면<br>주제의 가지가 펼쳐집니다.</p></div></div>
+  <div class="facet-footnote"><p>개수는 현재 모은 영상 기준입니다.<br>한 영상이 여러 주제에 속할 수 있습니다.</p><details><summary>분류는 어떻게 이루어지나요?</summary><p>Jev가 관련 IAB 가지를 단계적으로 평가합니다. 근거가 부족하면 상위 범주에 머물거나 판단을 보류합니다. 탐색하지 않은 범주는 미평가입니다.</p></details></div>
+</aside>
 <section id="results" class="results-panel" aria-labelledby="results-title" tabindex="-1"><div class="results-heading"><div><h2 id="results-title">탐색할 영상을 찾아보세요</h2><p id="result-summary">검색이 완료되면 Jev가 자동으로 주제를 분류합니다.</p></div><button id="export" class="button secondary small" disabled>JSON 내보내기</button></div>
+<section id="purpose-panel" class="purpose-panel" aria-labelledby="purpose-title" hidden>
+  <div class="purpose-heading"><h3 id="purpose-title">어떤 영상을 찾으세요?</h3><span class="help">영상 목적 · 여러 개 선택 가능</span></div>
+  <div id="purpose-filters" class="purpose-filters" aria-label="영상 목적 필터"></div>
+  <p class="help">선택한 목적 중 하나라도 포함하는 영상입니다. IAB 주제와 별도로 평가합니다.</p>
+</section>
 <div id="collection-toolbar" class="collection-toolbar" hidden><label class="check-label select-all"><input id="select-all" type="checkbox"><span>보이는 미분류·실패 영상 선택</span></label><div class="collection-actions"><span id="selection-count" class="help">선택 없음</span><button id="classify" class="button primary small" disabled>선택 영상 다시 시도</button><button id="cancel" class="button secondary small" hidden>중단</button></div></div>
 <div id="batch-status" class="batch-status" role="status" aria-live="polite" hidden><div><span id="batch-text"></span><span id="batch-count"></span></div><progress id="batch-progress" value="0" max="1" aria-label="분류 진행률"></progress></div>
 <div id="filter-toolbar" class="filter-toolbar" hidden><div id="state-filters" class="state-filters" aria-label="분류 상태 필터"></div><div class="view-options"><label for="sort">정렬</label><select id="sort"><option value="original">YouTube 검색 순서</option><option value="classified">분류된 영상 먼저</option></select><button id="view-toggle" class="icon-button" aria-label="목록으로 보기" title="목록으로 보기"></button></div></div>
