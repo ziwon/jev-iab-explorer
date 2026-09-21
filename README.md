@@ -14,6 +14,21 @@ A Korean-language video explorer that uses the Jev API to classify YouTube searc
 - **Topic-based browsing** — Explore hierarchical IAB filters and multiple labels, with scrolling up to 100 videos.
 - **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
 
+## Inside a classification
+
+The detail panel connects each video to its IAB category paths, raw Jev scores, and derived path scores. This original frame from the live run above also shows partial evaluation and the recommendation to add transcript evidence.
+
+[![Video details with IAB labels, raw Jev scores, path scores, and partial evaluation notices](assets/readme/workflow-automation-detail.png)](assets/readme/workflow-automation-detail.png)
+
+<details>
+<summary>View evaluation scope and model provenance</summary>
+
+The evaluation view shows assessed categories, budget limits, and the model, taxonomy, and rubric versions. Unvisited categories remain unassessed; supplied metadata is evidence, not an independently verified explanation.
+
+[![Evaluation scope, per-category scores, taxonomy checksum, and Jev model version](assets/readme/workflow-automation-evaluation.png)](assets/readme/workflow-automation-evaluation.png)
+
+</details>
+
 ## Quick start
 
 Requires Node.js 22 or later. Try the synthetic demo without API keys:
