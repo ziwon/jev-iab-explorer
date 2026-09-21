@@ -1,0 +1,7 @@
+# Server-side only. Never commit a real key.
+TYPESAFE_API_KEY=""
+# Official YouTube Data API v3 key. Used server-side for search.list and videos.list.
+YOUTUBE_API_KEY=""
+JEV_MODEL="jev-latest"
+# Optional: path to the Python executable with youtube-transcript-api installed.
+# PYTHON=".venv/bin/python"

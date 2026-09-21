@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {videoId,parseTranscript,segmentCues,normalizeInput,LIMITS} from '../public/shared.mjs';
+const id='abcDE_12-34';
+for(const url of [id,`https://youtu.be/${id}`,`https://www.youtube.com/watch?v=${id}&t=5`,`https://youtube.com/shorts/${id}`,`https://m.youtube.com/live/${id}`])test(`YouTube URL: ${url}`,()=>assert.equal(videoId(url),id));
+for(const url of [`https://youtube.com.evil.test/watch?v=${id}`,`http://youtube.com/watch?v=${id}`,`https://x:password@youtube.com/watch?v=${id}`,`https://youtube.com:8000/watch?v=${id}`,'https://127.0.0.1/','https://youtube.com/playlist?list=xyz','invalid'])test(`Reject URL: ${url}`,()=>assert.throws(()=>videoId(url),{code:'invalid_url'}));
+test('SRT preserves timestamp, joins text and decodes markup',()=>{const x=parseTranscript('1\r\n00:00:01,000 --> 00:00:03,500\r\n<b>Hello</b>\r\nA &amp; B\r\n\r\n2\r\n00:01:02,000 --> 00:01:03,000\r\nNext');assert.equal(x.length,2);assert.deepEqual(x[0],{id:'cue_1',start:1,end:3.5,text:'Hello A & B'});});
+test('VTT header, identifiers and cue settings',()=>{const x=parseTranscript('WEBVTT\n\ncue-a\n00:01.000 --> 00:03.000 align:start\nLearning cloud systems.');assert.equal(x[0].end,3);});
+test('plain text has no fabricated timestamps',()=>assert.equal(parseTranscript('A detailed explanation of online education.')[0].start,null));
+test('music marker is not mistaken for JSON',()=>assert.equal(parseTranscript('[Music]')[0].text,'[Music]'));
+test('JSON duration format is supported',()=>assert.equal(parseTranscript('[{"text":"hello","start":2,"duration":5}]')[0].end,7));
+test('extractor bundle is supported',()=>assert.equal(parseTranscript({segments:[{start:1,end:2,text:'hello'}]})[0].start,1));
+for(const input of ['','{"bad":',[],[{text:'a',start:2,end:1}],[{text:'a',start:'0',end:1}],[{text:'a',start:NaN,end:2}],[{text:'a',start:0,end:1},{text:'b'}]])test(`Reject invalid transcript ${JSON.stringify(input)}`,()=>assert.throws(()=>parseTranscript(input)));
+test('too many cues rejected before model access',()=>assert.throws(()=>parseTranscript(Array.from({length:LIMITS.cues+1},()=>({text:'x'})))));
+test('single giant cue rejected',()=>assert.throws(()=>parseTranscript('x'.repeat(4001)),{code:'input_too_large'}));
+test('segment gaps and 60-second windows keep provenance',()=>{const x=segmentCues(parseTranscript([{start:0,end:20,text:'a'},{start:21,end:30,text:'b'},{start:80,end:90,text:'c'}]));assert.equal(x.length,2);assert.deepEqual(x[0].evidence.map(c=>c.id),['cue_1','cue_2']);assert.equal(x[1].start,80);});
+test('title alone cannot be classified',()=>assert.throws(()=>normalizeInput({title:'Basketball'})));

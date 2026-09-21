@@ -1,0 +1,26 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {handle} from '../src/worker.mjs';import {demoBody,demoTaxonomy,demoProvider} from '../src/demo.mjs';import {normalizeMetadataInput} from '../public/shared.mjs';
+const env={TYPESAFE_API_KEY:'never-expose-this-key',YOUTUBE_API_KEY:'never-expose-youtube-key'};
+function req(path,body,headers={}){return new Request('https://lab.example'+path,{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://lab.example',...headers},body:JSON.stringify(body)});}
+test('configuration needs only provider keys and never exposes them',async()=>{const r=await handle(new Request('https://lab.example/api/config'),env);const s=await r.text();assert.equal(JSON.parse(s).live_available,true);assert.equal(JSON.parse(s).metadata_available,true);assert.ok(!s.includes(env.TYPESAFE_API_KEY));assert.ok(!s.includes(env.YOUTUBE_API_KEY));});
+test('keyless fixture demo works',async()=>{const r=await handle(new Request('https://lab.example/api/demo'));assert.equal(r.status,200);assert.equal((await r.json()).result.mode,'fixture_demo');});
+test('live still requires a server provider key',async()=>{const r=await handle(req('/api/classify',{...demoBody,consent:true}),{});assert.equal(r.status,503);});
+test('all POST routes reject foreign or opaque origins before upstream work',async()=>{
+  const paths=['/api/classify','/api/transcript','/api/youtube/metadata','/api/youtube/classify','/api/youtube/search'];
+  let calls=0;const unexpected=async()=>{calls++;throw new Error('upstream must not be called');};
+  for(const path of paths)for(const headers of [{Origin:'https://evil.example'},{Origin:'null'},{'Sec-Fetch-Site':'cross-site'},{'Sec-Fetch-Site':'same-site'}]){
+    const r=await handle(req(path,{...demoBody,consent:true},headers),env,{extract:unexpected,youtubeMetadata:unexpected,youtubeFetcher:unexpected,provider:{evaluate:unexpected}});assert.equal(r.status,403,path);assert.equal((await r.json()).error.code,'forbidden_origin');
+  }
+  assert.equal(calls,0);
+});
+test('browser form content types cannot invoke inference',async()=>{const r=await handle(req('/api/classify',{...demoBody,consent:true},{'Content-Type':'text/plain'}),env);assert.equal(r.status,415);});
+test('explicit provider consent required',async()=>{const r=await handle(req('/api/classify',demoBody),env);assert.equal(r.status,422);assert.equal((await r.json()).error.code,'consent_required');});
+test('worker has no hidden YouTube scraping fallback',async()=>{const r=await handle(req('/api/transcript',{youtube_url:'https://youtu.be/abcDE_12-34'}),env);assert.equal(r.status,422);assert.equal((await r.json()).error.code,'input_unavailable');});
+test('classify API works without an authorization header using an injected provider',async()=>{const request=req('/api/classify',{...demoBody,consent:true},{'Sec-Fetch-Site':'same-origin'});assert.equal(request.headers.has('authorization'),false);const r=await handle(request,env,{taxonomy:demoTaxonomy,provider:demoProvider()});assert.equal(r.status,200);const result=await r.json();assert.equal(result.mode,'live_jev');assert.equal(result.segments[0].labels.length,2);});
+test('oversized JSON body blocked',async()=>{const r=await handle(req('/api/classify',{transcript:'x'.repeat(200000),consent:true}),env);assert.equal(r.status,413);});
+test('API failures are not HTTP-200 fake results',async()=>{const r=await handle(req('/api/classify',{consent:true,title:'Only a title'}),env);assert.equal(r.status,400);assert.ok((await r.json()).error);});
+const metadata=()=>normalizeMetadataInput({video_id:'abcDE_12-34',title:'Online cloud course',description:'A detailed recorded course with practical labs.',tags:['education','cloud']},'abcDE_12-34');
+test('metadata preview uses the server adapter without an application token or Jev',async()=>{const r=await handle(req('/api/youtube/metadata',{youtube_url:'abcDE_12-34'}),env,{youtubeMetadata:async()=>metadata()});assert.equal(r.status,200);const body=await r.json();assert.equal(body.video.title,'Online cloud course');assert.equal(body.video.video_id,'abcDE_12-34');});
+test('transcript extraction needs no application token and stays local',async()=>{const r=await handle(req('/api/transcript',{youtube_url:'abcDE_12-34'}),{}, {extract:async id=>{assert.equal(id,'abcDE_12-34');return {segments:demoBody.segments};}});assert.equal(r.status,200);assert.deepEqual((await r.json()).segments,demoBody.segments);});
+test('metadata classification requires consent before spending YouTube quota',async()=>{let called=false;const r=await handle(req('/api/youtube/classify',{youtube_url:'abcDE_12-34'}),env,{youtubeMetadata:async()=>{called=true;return metadata();}});assert.equal(r.status,422);assert.equal(called,false);});
+test('metadata classification runs through Jev hierarchy and reports fallback state',async()=>{const r=await handle(req('/api/youtube/classify',{youtube_url:'abcDE_12-34',consent:true}),env,{youtubeMetadata:async()=>metadata(),taxonomy:demoTaxonomy,provider:demoProvider()});assert.equal(r.status,200);const body=await r.json();assert.equal(body.classification_mode,'metadata');assert.equal(body.fallback_required,true);});

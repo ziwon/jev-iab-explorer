@@ -1,0 +1,773 @@
+{
+  "captured_at": "2026-09-21T15:29:18.246Z",
+  "query": "업무 자동화",
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "source": "Live YouTube Data API and TypeSafe Jev responses",
+  "evidence_mode": "metadata_only",
+  "editing": "API waiting periods shortened; not a real-time speed demonstration.",
+  "search_requests": 1,
+  "returned_videos": 12,
+  "classified_videos": 12,
+  "failures": [],
+  "selected_category": {
+    "id": "597",
+    "name": "Artificial Intelligence"
+  },
+  "jev_http_attempts": 88,
+  "runs": [
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=CH8ozMjeskU",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 32301,
+        "output_tokens": 2494,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 2712,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "148",
+          "path": [
+            "Education",
+            "Online Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "133",
+          "path": [
+            "Education",
+            "Adult Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "619",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Internet"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=AM-FmRXXU_U",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 29368,
+        "output_tokens": 2494,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 2078,
+        "estimated_cost_usd": null
+      },
+      "summary": []
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=itaaC65K0X8",
+      "status": "completed",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 38951,
+        "output_tokens": 2494,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1999,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "148",
+          "path": [
+            "Education",
+            "Online Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "133",
+          "path": [
+            "Education",
+            "Adult Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "648",
+          "path": [
+            "Genres",
+            "Factual"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "626",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Internet",
+            "IT and Internet Support"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=hLNn4mDhR9c",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 29416,
+        "output_tokens": 2243,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1862,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "148",
+          "path": [
+            "Education",
+            "Online Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "619",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Internet"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=7gs-oIXqBk0",
+      "status": "completed",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 8,
+        "successful_calls": 8,
+        "input_tokens": 39094,
+        "output_tokens": 3064,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 2279,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "132",
+          "path": [
+            "Education"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=D_PPnjrToI8",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 28577,
+        "output_tokens": 2297,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1889,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "SPSHQ5",
+          "path": [
+            "Genres"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=3gFsSILDQKo",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 8,
+        "successful_calls": 8,
+        "input_tokens": 37766,
+        "output_tokens": 3064,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 2238,
+        "estimated_cost_usd": null
+      },
+      "summary": []
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=58YFu8s2I8w",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 33127,
+        "output_tokens": 2494,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1908,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "148",
+          "path": [
+            "Education",
+            "Online Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "133",
+          "path": [
+            "Education",
+            "Adult Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "619",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Internet"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=jw2-vhjshdg",
+      "status": "completed",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 9,
+        "successful_calls": 9,
+        "input_tokens": 40895,
+        "output_tokens": 3227,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 2536,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "52",
+          "path": [
+            "Business and Finance"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=OAIEYwmRijw",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 27890,
+        "output_tokens": 2243,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1811,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=WCgHcAjiY1s",
+      "status": "completed",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 32377,
+        "output_tokens": 2135,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1889,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "148",
+          "path": [
+            "Education",
+            "Online Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "133",
+          "path": [
+            "Education",
+            "Adult Education"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "626",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Internet",
+            "IT and Internet Support"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    },
+    {
+      "youtube_url": "https://www.youtube.com/watch?v=zZdjoRDM7BM",
+      "status": "partial",
+      "taxonomy": {
+        "version": "3.1",
+        "node_count": 704,
+        "source_blob": "a3a76ad293ade6485187a2903ee916c16bf1cf01",
+        "scope": "official_3.1"
+      },
+      "rubric_version": "iab-aboutness-2026-09-21-v2",
+      "model_versions": [
+        "jev-1.13.0"
+      ],
+      "usage": {
+        "http_attempts": 7,
+        "successful_calls": 7,
+        "input_tokens": 32511,
+        "output_tokens": 2494,
+        "model_versions": [
+          "jev-1.13.0"
+        ],
+        "elapsed_ms": 1883,
+        "estimated_cost_usd": null
+      },
+      "summary": [
+        {
+          "category_id": "597",
+          "path": [
+            "Technology & Computing",
+            "Artificial Intelligence"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "W3CW2J",
+          "path": [
+            "Technology & Computing",
+            "Computing",
+            "Computer Software and Applications",
+            "Productivity"
+          ],
+          "matched_segments": 1
+        },
+        {
+          "category_id": "132",
+          "path": [
+            "Education"
+          ],
+          "matched_segments": 1
+        }
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "phase": "query",
+      "duration": 1.8,
+      "captured_at": "2026-09-21T15:29:18.532Z"
+    },
+    {
+      "phase": "searching",
+      "duration": 0.8,
+      "captured_at": "2026-09-21T15:29:18.606Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:18.635Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:19.523Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:22.023Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:24.527Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:26.622Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:28.328Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:30.840Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:32.942Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:35.037Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:37.141Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:39.641Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:41.740Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:43.837Z"
+    },
+    {
+      "phase": "live-progress",
+      "duration": 0.85,
+      "captured_at": "2026-09-21T15:29:45.540Z"
+    },
+    {
+      "phase": "classified-overview",
+      "duration": 3,
+      "captured_at": "2026-09-21T15:29:45.622Z"
+    },
+    {
+      "phase": "iab-topic-filter",
+      "duration": 2.5,
+      "captured_at": "2026-09-21T15:29:45.829Z"
+    },
+    {
+      "phase": "raw-and-path-scores",
+      "duration": 3.5,
+      "captured_at": "2026-09-21T15:29:45.993Z"
+    },
+    {
+      "phase": "evaluation-trace",
+      "duration": 3,
+      "captured_at": "2026-09-21T15:29:46.139Z"
+    },
+    {
+      "phase": "topic-results",
+      "duration": 2,
+      "captured_at": "2026-09-21T15:29:46.265Z"
+    },
+    {
+      "phase": "loop-return",
+      "duration": 0.7,
+      "captured_at": "2026-09-21T15:29:46.377Z"
+    }
+  ]
+}
