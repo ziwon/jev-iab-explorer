@@ -4,20 +4,6 @@
 
 A Korean-language video explorer that uses the Jev API to classify YouTube search results into IAB Content Taxonomy 3.1 topics.
 
-![YouTube search, automatic IAB classification, and topic filtering](assets/readme/workflow-automation-live.gif)
-
-*Live search for “업무 자동화” (workflow automation), captured in Full HD. Waiting periods are shortened; partial results remain visible.*
-
-[Still image](assets/readme/workflow-automation-live.png) · [Capture data](assets/readme/workflow-automation-live.json) · [Architecture](docs/ARCHITECTURE.md)
-
-- **Automatic classification** — Search once and classify each result using its title, description, and tags.
-- **Combine topics** — Select multiple IAB topics with AND/OR matching, with scrolling up to 100 videos.
-- **Discover viewing purposes** — Start with five common purposes. Gemini proposes missing purposes from search metadata; Jev evaluates them and adds matching filters.
-- **Continue partial results** — Reuse earlier scores and explore skipped IAB branches with a per-video call budget.
-- **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
-
-Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example.
-
 ## Curate by topic and purpose
 
 [![Live AI income search, AND topic filters, adaptive purpose filtering, and Jev evidence](assets/readme/ai-income-curation-live.gif)](assets/readme/ai-income-curation-live.gif)
@@ -26,7 +12,15 @@ Search **“AI 자동 수익”** (AI automated income), then combine **Business
 
 *Full HD capture of live YouTube, Gemini, and Jev responses. Waiting periods are shortened. Gemini-generated purpose names and matching videos vary by search; partial evaluations remain visible.*
 
-[Still image](assets/readme/ai-income-curation-live.png) · [Purpose scores](assets/readme/ai-income-purpose-detail.png) · [Capture data](assets/readme/ai-income-curation-live.json)
+[Still image](assets/readme/ai-income-curation-live.png) · [Purpose scores](assets/readme/ai-income-purpose-detail.png) · [Capture data](assets/readme/ai-income-curation-live.json) · [Architecture](docs/ARCHITECTURE.md)
+
+- **Automatic classification** — Search once and classify each result using its title, description, and tags.
+- **Combine topics** — Select multiple IAB topics with AND/OR matching, with scrolling up to 100 videos.
+- **Discover viewing purposes** — Start with five common purposes. Gemini proposes missing purposes from search metadata; Jev evaluates them and adds matching filters.
+- **Continue partial results** — Reuse earlier scores and explore skipped IAB branches with a per-video call budget.
+- **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
+
+Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example.
 
 ## Inside a classification
 
