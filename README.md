@@ -12,7 +12,8 @@ A Korean-language video explorer that uses the Jev API to classify YouTube searc
 
 - **Automatic classification** — Search once and classify each result using its title, description, and tags.
 - **Combine topics** — Select multiple IAB topics with AND/OR matching, with scrolling up to 100 videos.
-- **Find the right format** — Filter by introduction, hands-on tutorial, product comparison, news, or case study. These viewing purposes are separate from IAB categories.
+- **Discover viewing purposes** — Start with five common purposes. Gemini proposes missing purposes from search metadata; Jev evaluates them and adds matching filters.
+- **Continue partial results** — Reuse earlier scores and explore skipped IAB branches with a per-video call budget.
 - **Inspect the evidence** — Review scores and evaluation scope, add transcript evidence, and export results as JSON.
 
 Select IAB topics in the sidebar, choose **AND** (all selected topics) or **OR** (any selected topic), then add a viewing-purpose filter. Multiple purposes match with OR; the topic and purpose groups must both match. Filters apply to collected videos and pause automatic pagination. **합성 데모 살펴보기** provides an offline example; the live captures show the earlier interface.
@@ -50,13 +51,15 @@ For live search and classification, stop the demo server and create the local co
 npm run init:local
 ```
 
-Set `TYPESAFE_API_KEY` and `YOUTUBE_API_KEY` in `.dev.vars`, then run `npm run dev`. Keys stay on the server; live requests use provider quota.
+Set `TYPESAFE_API_KEY` and `YOUTUBE_API_KEY` in `.dev.vars`, then run `npm run dev`. Add `GEMINI_API_KEY` to enable adaptive purposes; `GEMINI_MODEL` defaults to `gemini-2.5-flash`. All keys stay on the server; live requests use provider quota. Restart the local server after changing configuration.
 
 ## How it works
 
 Public metadata is evaluated first. When evidence is insufficient, transcripts can supplement the classification. Video, audio, and thumbnail pixels are not analyzed. Raw scores are not calibrated accuracy measurements; path scores are heuristics, and unassessed categories remain unknown.
 
-Viewing purposes are evaluated alongside evidence sufficiency in the same Jev request. This adds questions and token usage, without a separate purpose-only request. Purpose scores, evidence IDs, and a separate rubric version are included in the detail panel and JSON export. Transcript-based purposes describe assessed segments, not the entire video. Missing assessments and abstentions remain distinct.
+Initial purposes and separate topic/purpose evidence checks share one Jev request. With Gemini configured, the first batch containing purpose abstentions automatically triggers discovery from up to 20 collected videos. New definitions include inclusion/exclusion criteria and exact metadata quotes; Jev evaluates their applicability across collected results. **목적 보완** can extend the catalog as more videos arrive, up to eight additional purposes. A proposal does not guarantee a matching video or remove abstention.
+
+**이어서 분류** explores skipped IAB branches using existing evidence and scores, with at most 4 or 12 additional Jev attempts per video. It does not automatically fetch captions or assess omitted transcript segments. Details and exports retain previous outputs, raw scores, and model/rubric provenance. Resume state expires after six hours and is excluded from exports. Transcript purposes describe assessed segments, not the entire video.
 
 ## Tests
 
