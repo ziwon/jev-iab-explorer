@@ -7,4 +7,5 @@ export const PURPOSES = Object.freeze([
   {id:'case_study',name:'사례 소개',description:'Examines a concrete implementation, project, experience, or outcome in context.'}
 ]);
 export const PURPOSE_ACCEPT = 0.75;
-export const PURPOSE_RUBRIC_VERSION = 'viewing-purpose-2026-09-22-v1';
+export const PURPOSE_RUBRIC_VERSION = 'viewing-purpose-2026-09-22-v2';
+export const purposeCatalog=result=>result?.purpose_rubric?.catalog??PURPOSES;

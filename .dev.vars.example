@@ -3,5 +3,8 @@ TYPESAFE_API_KEY=""
 # Official YouTube Data API v3 key. Used server-side for search.list and videos.list.
 YOUTUBE_API_KEY=""
 JEV_MODEL="jev-latest"
+# Optional: Gemini proposes additional viewing purposes; Jev evaluates them.
+GEMINI_API_KEY=""
+GEMINI_MODEL="gemini-2.5-flash"
 # Optional: path to the Python executable with youtube-transcript-api installed.
 # PYTHON=".venv/bin/python"

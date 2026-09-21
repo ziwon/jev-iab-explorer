@@ -13,7 +13,7 @@ function provider({sufficient=.95,values={},budgetAfter=Infinity}={}) {
   return {calls,metrics:{attempts:0,successful_calls:0,input_tokens:0,output_tokens:0,models:new Set(['test-fixture'])},async evaluate(state,questions){
     if(calls.length>=budgetAfter)throw new AppError('budget_exhausted','Test budget',429);
     calls.push({state,questions});
-    return Object.fromEntries(Object.keys(questions).map(id=>[id,id==='sufficient'?sufficient:id.startsWith('purpose_')?(id in values?values[id]:.1):.9]));
+    return Object.fromEntries(Object.keys(questions).map(id=>[id,['sufficient','purpose_sufficient'].includes(id)?sufficient:id.startsWith('purpose_')?(id in values?values[id]:.1):.9]));
   }};
 }
 
@@ -36,10 +36,10 @@ test('topic group intersects purpose group; purpose choices use OR',async()=>{
   assert.equal(matchesDiscovery(cloud,{...filters,purposes:['news']}),false);
   assert.equal(matchesDiscovery({},{}),true);
 });
-test('five purpose questions share the sufficiency request and retain raw scores',async()=>{
+test('five purpose questions share separate topic and purpose sufficiency checks',async()=>{
   const p=provider({values:{purpose_tutorial:.93,purpose_introduction:.81}});
   const r=await classify(input(),demoTaxonomy,p);
-  assert.equal(Object.keys(p.calls[0].questions).length,6);
+  assert.equal(Object.keys(p.calls[0].questions).length,7);
   assert.equal(p.calls.length,4); // Sufficiency/purposes plus three taxonomy levels.
   assert.equal(p.calls.slice(1).some(c=>Object.keys(c.questions).some(k=>k.startsWith('purpose_'))),false);
   assert.deepEqual(acceptedPurposes(r).map(x=>x.purpose_id),['tutorial','introduction']);

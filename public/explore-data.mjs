@@ -1,5 +1,5 @@
 /** Pure presentation data: accepted labels alone create facets, never unvisited nodes. */
-import {PURPOSES} from './purposes.mjs';
+import {purposeCatalog} from './purposes.mjs';
 export const itemKey=item=>item.fixture_id??item.video.video_id;
 export function acceptedLabels(result) {
   const labels=new Map();
@@ -25,7 +25,7 @@ export function matchesTopics(item,ids=[],operator='AND') {
   return operator==='OR'?topics.some(id=>matchesCategory(item,id)):topics.every(id=>matchesCategory(item,id));
 }
 export function acceptedPurposes(result) {
-  const labels=new Map(),known=new Set(PURPOSES.map(p=>p.id));
+  const labels=new Map(),known=new Set(purposeCatalog(result).map(p=>p.id));
   for(const segment of result?.segments??[]) {
     if(segment.purpose_assessment?.status!=='classified')continue;
     for(const label of segment.purpose_assessment.labels??[]) {
@@ -38,7 +38,7 @@ export function acceptedPurposes(result) {
 export function purposeState(item) {
   if(acceptedPurposes(item.result).length)return 'classified';
   const segments=item.result?.segments??[];
-  if(!segments.length || segments.some(s=>!s.purpose_assessment || s.purpose_assessment.status==='not_assessed') || item.result.coverage?.omitted_segments?.length)return 'not_assessed';
+  if(!segments.length || segments.some(s=>!s.purpose_assessment || s.purpose_assessment.status==='not_assessed'||s.purpose_assessment.pending_purpose_ids?.length) || item.result.coverage?.omitted_segments?.length)return 'not_assessed';
   return 'abstained';
 }
 export function matchesPurposes(item,ids=[]) {

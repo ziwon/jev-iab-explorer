@@ -10,7 +10,7 @@ const run=promisify(execFile);const root=resolve(fileURLToPath(new URL('../publi
 const port=Number(process.env.PORT??8790);const demoOnly=process.argv.includes('--demo-only');let extracting=false;let active=0;
 const csp="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data: https://i.ytimg.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'";
 const mime={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json'};
-const env={RUNTIME:'localhost',TYPESAFE_API_KEY:demoOnly?'':process.env.TYPESAFE_API_KEY,YOUTUBE_API_KEY:demoOnly?'':process.env.YOUTUBE_API_KEY,JEV_MODEL:process.env.JEV_MODEL,ASSETS:{async fetch(req){
+const env={RUNTIME:'localhost',TYPESAFE_API_KEY:demoOnly?'':process.env.TYPESAFE_API_KEY,YOUTUBE_API_KEY:demoOnly?'':process.env.YOUTUBE_API_KEY,GEMINI_API_KEY:demoOnly?'':process.env.GEMINI_API_KEY,GEMINI_MODEL:process.env.GEMINI_MODEL,JEV_MODEL:process.env.JEV_MODEL,ASSETS:{async fetch(req){
   let path;try{path=decodeURIComponent(new URL(req.url).pathname);}catch{return new Response('Bad path',{status:400});}
   const file=resolve(root,'.'+(path==='/'?'/index.html':path));
   if(!file.startsWith(root+sep) && file!==resolve(root,'index.html'))return new Response('Forbidden',{status:403});
@@ -20,7 +20,7 @@ async function extract(url){
   if(extracting)throw new AppError('extractor_busy','다른 자막 추출이 실행 중이야.',429);
   const id=videoId(url);extracting=true;
   try {
-    const {stdout}=await run(process.env.PYTHON??'python',[fileURLToPath(new URL('../scripts/extract_youtube.py',import.meta.url)),`--video-id=${id}`],{timeout:45000,maxBuffer:LIMITS.bodyBytes,windowsHide:true,env:{...process.env,TYPESAFE_API_KEY:'',YOUTUBE_API_KEY:'',APP_TOKEN:''}});
+    const {stdout}=await run(process.env.PYTHON??'python',[fileURLToPath(new URL('../scripts/extract_youtube.py',import.meta.url)),`--video-id=${id}`],{timeout:45000,maxBuffer:LIMITS.bodyBytes,windowsHide:true,env:{...process.env,TYPESAFE_API_KEY:'',YOUTUBE_API_KEY:'',GEMINI_API_KEY:'',APP_TOKEN:''}});
     const data=JSON.parse(stdout);
     if(data.error)throw new AppError(data.error.code,data.error.message,422);
     return data;
