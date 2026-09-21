@@ -6,13 +6,13 @@ A Korean-language video explorer that uses the Jev API to classify YouTube searc
 
 ## Curate by topic and purpose
 
-[![Live AI income search, AND topic filters, adaptive purpose filtering, and Jev evidence](assets/readme/ai-income-curation-live.gif)](assets/readme/ai-income-curation-live.gif)
+[![Live AI income search narrowed to practical monetization methods, with risk warnings left optional](assets/readme/ai-income-curation-live.gif)](assets/readme/ai-income-curation-live.gif)
 
-Search **“AI 자동 수익”** (AI automated income), then combine **Business and Finance AND Personal Finance**: 17 collected videos become 2. Selecting **“수익화 전략 및 조언”** (monetization strategy and advice) leaves 1, with its raw Jev scores and purpose definition available in the detail panel.
+Search **“AI 자동 수익”** (AI automated income) and collect two pages, then combine **Artificial Intelligence AND Business and Finance**: 34 videos become 3. Selecting **“수익 모델·실행 방법”** (revenue models and practical methods) leaves 1. Its description and chapters list research services, digital product sales, and mini-site creation; the capture opens this evidence and the raw Jev scores. **“위험·주의사항”** (risks and cautions) remains a separate, unselected option.
 
-*Full HD capture of live YouTube, Gemini, and Jev responses. Waiting periods are shortened. Gemini-generated purpose names and matching videos vary by search; partial evaluations remain visible.*
+*Full HD capture of live YouTube, Gemini, and Jev responses. Waiting periods are shortened. Selection reflects public metadata; revenue claims are not independently verified. Generated purposes and matching videos may vary; partial evaluations remain visible.*
 
-[Still image](assets/readme/ai-income-curation-live.png) · [Purpose scores](assets/readme/ai-income-purpose-detail.png) · [Capture data](assets/readme/ai-income-curation-live.json) · [Architecture](docs/ARCHITECTURE.md)
+[Still image](assets/readme/ai-income-curation-live.png) · [Workflow evidence](assets/readme/ai-income-method-evidence.png) · [Purpose scores](assets/readme/ai-income-purpose-detail.png) · [Capture data](assets/readme/ai-income-curation-live.json) · [Architecture](docs/ARCHITECTURE.md)
 
 - **Automatic classification** — Search once and classify each result using its title, description, and tags.
 - **Combine topics** — Select multiple IAB topics with AND/OR matching, with scrolling up to 100 videos.
@@ -61,7 +61,7 @@ Set `TYPESAFE_API_KEY` and `YOUTUBE_API_KEY` in `.dev.vars`, then run `npm run d
 
 Public metadata is evaluated first. When evidence is insufficient, transcripts can supplement the classification. Video, audio, and thumbnail pixels are not analyzed. Raw scores are not calibrated accuracy measurements; path scores are heuristics, and unassessed categories remain unknown.
 
-Initial purposes and separate topic/purpose evidence checks share one Jev request. With Gemini configured, the first batch containing purpose abstentions automatically triggers discovery from up to 20 collected videos. New definitions include inclusion/exclusion criteria and exact metadata quotes; Jev evaluates their applicability across collected results. **목적 보완** can extend the catalog as more videos arrive, up to eight additional purposes. A proposal does not guarantee a matching video or remove abstention.
+Initial purposes and separate topic/purpose evidence checks share one Jev request. With Gemini configured, the first batch containing purpose abstentions automatically triggers discovery from up to 20 collected videos. New definitions include inclusion/exclusion criteria and exact metadata quotes; Jev evaluates their applicability across collected results. Discovery instructions separate practical methods from risk warnings, which remain optional purpose filters. **목적 보완** can extend the catalog as more videos arrive, up to eight additional purposes. A proposal does not guarantee a matching video or remove abstention.
 
 **이어서 분류** explores skipped IAB branches using existing evidence and scores, with at most 4 or 12 additional Jev attempts per video. It does not automatically fetch captions or assess omitted transcript segments. Details and exports retain previous outputs, raw scores, and model/rubric provenance. Resume state expires after six hours and is excluded from exports. Transcript purposes describe assessed segments, not the entire video.
 
